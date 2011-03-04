@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+<head><meta charset="utf-8" /> 
+<title>Vimeo Channel/Group Player</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+<script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
+<script id="vidLinkTemplate" type="text/x-jquery-tmpl">
+    <ul class="video-about"><li class="video-thumb"><img src="${thumbnail_small}" alt="" /></li><li class="video-title">${title}</li><li class="video-link"><a href="${url}" class="watch-link" id="${id}">Watch</a></li></ul>
+</script>
+<script id="vidTemplate" type="text/x-jquery-tmpl">
+    <iframe id="vimeo-player" src="http://player.vimeo.com/video/${id}?title=0&amp;byline=0&amp;portrait=0&amp;fullscreen=1" width="640" height="359" frameborder="0"></iframe>
+</script>
+<script>
+    var vimeochannelorgroup = "group"; // = channel or group
+    var vimeoname = "beyondthestill";
+    var numberofvideos = 3;
+    $(document).ready(function() {
+		$.getJSON("http://vimeo.com/api/v2/" + vimeochannelorgroup + "/" + vimeoname + "/videos.json?max=" + numberofvideos + "&callback=?", function(data) {
+			$( "#video-links" ).empty();
+			var arVid = [numberofvideos]; for (var i=0; i<numberofvideos; i++) { arVid[i] = data[i]; } // limit the number of videos
+			$( "#vidLinkTemplate" ).tmpl( arVid ).appendTo( "#video-links" ); // build video tabs
+			$( ".watch-link" ).click( function() { var $this = $(this); var iid = $this.attr("id"); placeVid( { id:iid } ); $( ".video-about").removeClass("selected"); $this.parent().parent().addClass("selected"); return false; });
+		});
+	});
+	function placeVid(id) { var data = $( "#vidTemplate" ).tmpl(id); $( "#vidspan" ).html( data ); return false; }
+</script>
+</head>
+<body> 
+
+	<div id="videos"> 
+		<div id="video-links"> 
+    		<ul class="video-about selected"> 
+    			<li class="video-thumb"><img src="http://b.vimeocdn.com/ts/109/496/109496932_100.jpg" alt="" /></li> 
+    			<li class="video-title">Default Video</li>
+    			<li class="video-link"><a href="#">Watch</a></li> 
+    		</ul> 
+        </div>	
+    </div> 
+			
+	<div id="video-player"> 	    					
+		<span class="vvqbox vvqvimeo" id="vidspan" style="width:640px;height:359px;"></span> 
+	</div> 
+					
+</body>
+</html>
